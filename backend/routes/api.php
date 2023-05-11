@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BookController;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use App\Http\Resources\BookResource;
@@ -20,9 +21,15 @@ Route::get("/books", function(){
     return BookResource::collection(Book::all());
 });
 
-Route::get("/books{id}", function($id){
-    return BookResource::collection(Book::findOrFail($id));
+Route::get("/book/{id}", function($id){
+    return new BookResource(Book::findOrFail($id));
 });
+
+Route::put("/book/{id}", [BookController::class, "update"]);
+
+Route::delete("/book/{id}", [BookController::class, "destroy"]);
+
+Route::post("/book", [BookController::class, "store"]);
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

@@ -36,6 +36,17 @@ class BookController extends Controller
             "author" => "required",
             "publisher" => "required",
         ]);
+
+        if($validator->fails()){
+            return $this->sendError("Validation Error", $validator->error());
+        }
+
+        $book = Book::create($input);
+        return response()->json([
+            "success" => true,
+            "message" => "Book Record Created Successfully",
+            "book" => $book
+        ]);
     }
 
     /**
@@ -43,7 +54,7 @@ class BookController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return Book::find($id);
     }
 
     /**
@@ -59,7 +70,20 @@ class BookController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        if(Book::where("id",$id)->exists()){
+            $book = Book::find($id);
+            $book->title = $request->title;
+            $book->author = $request->author;
+            $book->publisher = $request->publisher;
+            $book->save();
+            return response()->json([
+                "message" => "Book Record Updated Successfully"
+            ],200);
+        } else{
+            return response()->json([
+                "message"=> "Book Record Not Found"
+            ],404);
+        }
     }
 
     /**
@@ -67,6 +91,16 @@ class BookController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        if(Book::where("id",$id)->exists()){
+            $book = Book::find($id);
+            $book->delete();
+            return response()->json([
+                "message" => "Book Record Deleted Successfully"
+            ],200);
+        }else{
+            return response()->json([
+                "message" => "Book Record Not Found"
+            ],404);
+        }
     }
 }
