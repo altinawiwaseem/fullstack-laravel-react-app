@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Book;
 use Illuminate\Http\Request;
+use App\Http\Resources\BookResource;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,6 +15,14 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
+Route::get("/books", function(){
+    return BookResource::collection(Book::all());
+});
+
+Route::get("/books{id}", function($id){
+    return BookResource::collection(Book::findOrFail($id));
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
